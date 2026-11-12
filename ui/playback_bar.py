@@ -53,12 +53,14 @@ class PlaybackBar(QWidget):
         
         self.previous = QPushButton("⏮")
         self.play = QPushButton("▶")
-        self.pause = QPushButton("⏸")
         self.next = QPushButton("⏭")
+        
+        self.play.setFixedSize(45, 45)
+        self.previous.setFixedSize(60, 45)
+        self.next.setFixedSize(60, 45)
         
         controls_layout.addWidget(self.previous)
         controls_layout.addWidget(self.play)
-        controls_layout.addWidget(self.pause)
         controls_layout.addWidget(self.next)
         
         main_layout.addWidget(self.album_cover)
@@ -82,6 +84,12 @@ class PlaybackBar(QWidget):
             pixmap.loadFromData(artwork)
             
             self.album_cover.setPixmap(pixmap.scaled(100, 100))
+            
+    def update_playback_state(self, is_playing):
+        if is_playing:
+            self.play.setText("⏸")
+        else:
+            self.play.setText("▶")
             
     def update_postiion(self, postiion):
         self.progress.blockSignals(True)

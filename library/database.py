@@ -42,7 +42,7 @@ class MusicDatabase:
         cursor = self.connection.cursor()
         
         cursor.execute("""
-        INSERT OR IGNORE INTO songs
+        INSERT INTO songs
         (
                 path,
                 title,
@@ -53,6 +53,11 @@ class MusicDatabase:
         
         VALUES (?, ?, ?, ?, ?)
         
+        ON CONFLICT(path) DO UPDATE SET
+            title = excluded.title,
+            artist = excluded.artist,
+            album = excluded.album,
+            duration = excluded.duration
         """,
         (
             song.path,

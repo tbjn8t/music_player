@@ -19,7 +19,18 @@ def get_wav_artwork(path):
 
 class ArtworkExtractor:
     def get_artwork(self, path):
-        audio = File(path)
+        if not os.path.exists(path):
+            return None
+        
+        try:
+            audio = File(path)
+        except Exception as e:
+            print(f"Could not read artwork: {path}")
+            print(e)
+            return None
+        
+        if audio is None:
+            return None
         
         if audio is None:
             return self.find_folder_art(path)

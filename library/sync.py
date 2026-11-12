@@ -19,12 +19,28 @@ class LibrarySync:
         self.remove_missing_files()
         
     def remove_missing_files(self):
+        locations = self.database.get_library_locations()
+        
+        valid_locations = [
+            os.path.abspath(os.path.normpath(location))
+            for location in locations
+            if os.path.exists(location)
+        ]
+        
         songs = self.database.get_all_songs()
         
+        missing_paths = []
         for song in songs:
-            path = song.path
+            path = os.path.abspath(os.path.normpath(song.path))
             
             if not os.path.exists(path):
-                print("Missing:", path)
+                belongs_to_library = any(
+                    os.path.commonpath([path, location]) == location
+                    for location in valid_locations
+                )
                 
-                self.database.remove_song(path)
+                if belongs_to_library:
+                    missing_paths.append(song.path)
+        for path in missing_paths:
+            print("Removing:", path)
+            self.database.remove_song(path)
